@@ -26,9 +26,9 @@ $(document).ready(function(){
     $("#add-train").on("click", function() {
         event.preventDefault();
         // Storing and retrieving new train data
-        name = $("#train-name").val().trim();
+        name = $("#trainName").val().trim();
         destination = $("#destination").val().trim();
-        firstTrain = $("#first-train").val().trim();
+        firstTrain = $("#firstTrain").val().trim();
         frequency = $("#frequency").val().trim();
 
         // Pushing train data to database
@@ -44,23 +44,23 @@ $(document).ready(function(){
 
     database.ref().on("child_added", function(childSnapshot) {
         var nextArr;
-        var minAway;
+        var minutesAway;
         // Change year so first train comes before now
         var firstTrainNew = moment(childSnapshot.val().firstTrain, "hh:mm").subtract(1, "years");
         // Calculating the difference between the current and firstTrain
-        var diffTime = moment().diff(moment(firstTrainNew), "minutes");
-        var remainder = diffTime % childSnapshot.val().frequency;
+        var timeDifference = moment().diff(moment(firstTrainNew), "minutes");
+        var timeRemainder = timeDifference % childSnapshot.val().frequency;
         // Calculating the minutes until next train
-        var minAway = childSnapshot.val().frequency - remainder;
+        var minutesAway = childSnapshot.val().frequency - timeRemainder;
         // Calculating the Next train time
-        var nextTrain = moment().add(minAway, "minutes");
+        var nextTrain = moment().add(minutesAway, "minutes");
         nextTrain = moment(nextTrain).format("hh:mm");
 
         $("#add-row").append("<tr><td>" + childSnapshot.val().name +
                 "</td><td>" + childSnapshot.val().destination +
                 "</td><td>" + childSnapshot.val().frequency +
                 "</td><td>" + nextTrain + 
-                "</td><td>" + minAway + "</td></tr>");
+                "</td><td>" + minutesAway + "</td></tr>");
 
             // Error handler
         }, function(errorObject) {
